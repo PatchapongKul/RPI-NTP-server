@@ -201,8 +201,8 @@ More description details of chronyc parameter can be found at https://chrony-pro
 ![alt text](./figure/direct-2.png)
 |Measurement|Value|
 |--|--|
-|Average Offset (mean)    |1803.386 us|
-|Average Offset (median)  |0.099 us|
+|Average Offset (mean)    |1803.386 µs|
+|Average Offset (median)  |0.099 µs|
 |Average Frequency Error  |7.52 ppm|
 |Average Frequency Skew   |0.03 ppm|
 
@@ -259,8 +259,8 @@ log tracking measurements statistics
 
 |Measurement|Value|
 |--|--|
-|Average Offset (mean)    |0.047 us|
-|Average Offset (median)  |0.032 us|
+|Average Offset (mean)    |0.047 µs|
+|Average Offset (median)  |0.032 µs|
 |Average Frequency Error  |7.38 ppm|
 |Average Frequency Skew   |0.04 ppm|
 
@@ -281,8 +281,8 @@ Similar to FT232RL, FT232H Module converts the data from Serial to USB. This mod
 ![alt text](figure/232H.png)
 |Measurement|Value|
 |--|--|
-|Average Offset (mean)    |0.031 us|
-|Average Offset (median)  |0.009 us|
+|Average Offset (mean)    |0.031 µs|
+|Average Offset (median)  |0.009 µs|
 |Average Frequency Error  |7.60 ppm|
 |Average Frequency Skew   |0.04 ppm|
 
@@ -329,11 +329,29 @@ Note that the MAX3232 doesn't provide 3.3V to the GNSS module so external 3.3V s
 ![alt text](figure/MAX3232-1.png)
 |Measurement|Value|
 |--|--|
-|Average Offset (mean)    |0.427 us|
-|Average Offset (median)  |0.005 us|
+|Average Offset (mean)    |0.427 µs|
+|Average Offset (median)  |0.005 µs|
 |Average Frequency Error  |4.15 ppm|
 |Average Frequency Skew   |0.04 ppm|
 
+## Result comparison
+**Offset Comparison**
+![(figure/compare-offset.png)](figure/compare-offset.png)
+
+**Frequency Error Comparison**
+![alt text](figure/compare-frequency.png)
+
+**Frequency Skew Comparison**
+![alt text](figure/compare-skew.png)
+
+|Methods|Average Offset (mean) [µs]|Average Offset (median) [µs]|Average Frequency Error [ppm]|Average Frequency Skew [ppm]|
+|--|--|--|--|--|
+|PI GPIO|1803.386|0.099|7.52|0.03|
+|FT232RL|0.047|0.032|7.38|0.04|
+|FT232H|0.031|0.009|7.60 |0.04 |
+|MAX3232|0.427|0.005|4.15|0.04|
+
+The results show that the interrupt-based method (which includes PI GPIO and MAX3232) tends to have a higher average offset (mean). This is likely due to instances where the system loses track of the PPS signal, and when the signal is reacquired, the offset becomes larger before it converges. In contrast, the FT232-based method, which uses a USB connection, continuously polls the signal status, ensuring more consistent tracking. All methods exhibit a low-frequency error (~4-8 ppm), as Chrony is configured to correct the time every 16 seconds (with a polling interval of 4). Additionally, the average frequency skew remains consistent across all methods.
 # References
 https://austinsnerdythings.com/2021/04/19/microsecond-accurate-ntp-with-a-raspberry-pi-and-pps-gps/
 https://www.workswiththeweb.com/piprojects/2023/08/06/RBPi-NTP-Server/
